@@ -1,0 +1,32 @@
+- name: Install NFS client package
+  ansible.builtin.apt:
+    name: nfs-common
+    state: present
+    update_cache: yes
+
+- name: Ensure local mount directories exist
+  ansible.builtin.file:
+    path: "{{ item.local }}"
+    state: directory
+    owner: root
+    group: root
+    mode: '0755'
+  loop: "{{ nfs_shares }}"
+
+- name: Mount NFS shares (optimized for performance)
+  ansible.builtin.mount:
+    path: "{{ item.local }}"
+    src: "{{ item.server_ip }}:{{ item.remote }}"
+    fstype: nfs
+    opts: rw,hard,intr,noatime,nolock,rsize=1048576,wsize=1048576,tcp
+    state: mounted
+  loop: "{{ nfs_shares }}"
+
+- name: Ensure NFS shares are mounted automatically at boot
+  ansible.builtin.mount:
+    path: "{{ item.local }}"
+    src: "{{ item.server_ip }}:{{ item.remote }}"
+    fstype: nfs
+    opts: rw,hard,intr,noatime,nolock,rsize=1048576,wsize=1048576,tcp
+    state: present
+  loop: "{{ nfs_shares }}"
