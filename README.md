@@ -1,4 +1,4 @@
-# ansible_nfs
+# Ansible nfs
 Script for installing and configuring nfs in Ansible
 
 ## Example
