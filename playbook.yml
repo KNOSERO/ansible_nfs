@@ -3,6 +3,10 @@
     name: nfs-common
     state: present
     update_cache: yes
+  register: nfs_install
+  retries: 5
+  delay: 30
+  until: nfs_install is success
 
 - name: Ensure local mount directories exist
   ansible.builtin.file:
